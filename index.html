@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Feliz Cumpleaños!</title>
+  <style>
+    :root {
+      --primary: #ff6b6b;
+      --secondary: #4ecdc4;
+      --bg: #f7f7f7;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .screen {
+      display: none;
+      padding: 20px;
+      animation: fadeIn 0.5s;
+    }
+
+    .active { display: block; }
+
+    /* Globos flotando */
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      width: 50px;
+      height: 70px;
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: float 8s infinite ease-in;
+      z-index: -1;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 25px;
+      background-color: var(--primary);
+      color: white;
+      margin: 10px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background-color: #ff5252;
+    }
+
+    /* Pastel estilizado */
+    .cake-container {
+      margin: 20px auto;
+      width: 250px;
+      height: 200px;
+      position: relative;
+    }
+
+    .cake {
+      width: 100%;
+      height: 120px;
+      background: #ffb347;
+      border-radius: 10px;
+      position: absolute;
+      bottom: 0;
+      box-shadow: inset 0 -10px #d2691e;
+    }
+
+    .icing {
+      width: 100%;
+      height: 40px;
+      background: #fff;
+      border-radius: 10px 10px 0 0;
+      position: absolute;
+      top: 0;
+      box-shadow: inset 0 -5px #eee;
+    }
+
+    .candle {
+      width: 15px;
+      height: 40px;
+      background: #4ecdc4;
+      margin: 0 5px;
+      display: inline-block;
+      position: relative;
+    }
+
+    .flame {
+      width: 15px;
+      height: 15px;
+      background: gold;
+      border-radius: 50%;
+      position: absolute;
+      top: -15px;
+      left: 0;
+      animation: flicker 0.3s infinite alternate;
+    }
+
+    @keyframes flicker {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(1.2); opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="balloon-container"></div>
+
+  <!-- Menú principal -->
+  <div id="menu" class="screen active">
+    <h1>✨ ¡Bienvenida! ✨</h1>
+    <p>Elige una opción:</p>
+    <button onclick="showScreen('felicitacion')">Ver Felicitación</button>
+    <button onclick="startParty()">Ver Pastel</button>
+    <button onclick="showScreen('te-quiero')">Mensaje Especial</button>
+  </div>
+
+  <!-- Felicitación -->
+  <div id="felicitacion" class="screen">
+    <h2>🎉 ¡Feliz Cumpleaños! 🎉</h2>
+    <p style="font-size: 22px;">Espero sea un día muy increible para ti, lleno de mucho amor, cariño y muchas risas y abrazos de todas las personas que te quieren. Nuevamente felices 22
+        vueltas al sol preciosa clement de mi corazón  </p>
+    <button onclick="showScreen('menu')">Regresar al Menú</button>
+  </div>
+
+  <!-- Pastel -->
+  <div id="pastel-screen" class="screen">
+    <h2>🎂 ¡Pide un deseo! 🎂</h2>
+    <div class="cake-container">
+      <div class="icing"></div>
+      <div class="cake"></div>
+      <div id="candles">
+        <div class="candle"><div class="flame"></div></div>
+        <div class="candle"><div class="flame"></div></div>
+        <div class="candle"><div class="flame"></div></div>
+      </div>
+    </div>
+    <button id="btn-apagar" onclick="blowCandles()"> Pide un deseo y apaga tus velitas</button>
+    <br>
+    <button onclick="stopMusic(); showScreen('menu')">Regresar al Menú</button>
+  </div>
+
+  <!-- Te quiero mucho -->
+  <div id="te-quiero" class="screen">
+    <h1 style="color: var(--primary); font-size: 50px;">❤️ Muchisimas felicidades, te quiero mucho,mucho, clement de mi corazón ❤️</h1>
+    <button onclick="showScreen('menu')">Regresar al Menú</button>
+    <button onclick="endAll()" style="background: #333;">Finalizar Todo</button>
+  </div>
+
+  <!-- Audios -->
+  <audio id="audio-mañanitas" src="mananitas-cepillin.mp3"></audio>
+  <audio id="audio-aplausos" src="https://www.myinstants.com/media/sounds/applause_8.mp3"></audio>
+
+  <script>
+    // Globos flotando
+    const container = document.getElementById('balloon-container');
+    for (let i = 0; i < 15; i++) {
+      let b = document.createElement('div');
+      b.className = 'balloon';
+      b.style.left = Math.random() * 100 + 'vw';
+      b.style.animationDelay = Math.random() * 5 + 's';
+      b.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 70%)`;
+      container.appendChild(b);
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startParty() {
+      showScreen('pastel-screen');
+      const music = document.getElementById('audio-mañanitas');
+      music.play(); // se activa al presionar el botón
+      // Reiniciar velas
+      document.querySelectorAll('.flame').forEach(f => f.style.display = 'block');
+    }
+
+    function blowCandles() {
+      document.querySelectorAll('.flame').forEach(f => f.style.display = 'none');
+      document.getElementById('audio-aplausos').play();
+      alert("¡Yey, apagaste tus Velitas, corazón de melón. Muchas felicidades. Espero que todos los deseos que pidas en este día se cumplan y que sigas cumpliendo muchos añitos más! 👏✨");
+    }
+
+    function stopMusic() {
+      const music = document.getElementById('audio-mañanitas');
+      music.pause();
+      music.currentTime = 0;
+    }
+
+    function endAll() {
+      document.body.innerHTML = "<h1 style='margin-top:20%;'>¡Gracias por estar aquí! 👋</h1>";
+      document.body.style.background = "white";
+    }
+  </script>
+</body>
+</html>
